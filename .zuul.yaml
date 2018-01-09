@@ -1,0 +1,8 @@
+- project:
+    name: openstack/blazar-tempest-plugin
+    check:
+      jobs:
+        - blazar-devstack-dsvm
+    gate:
+      jobs:
+        - blazar-devstack-dsvm
