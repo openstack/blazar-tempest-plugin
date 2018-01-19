@@ -58,8 +58,8 @@ class ResourceReservationScenarioTest(manager.ScenarioTest):
         named_lease = []
 
         # and then search by lease_name
-        named_lease = (
-            filter(lambda lease: lease['name'] == lease_name, lease_list))
+        named_lease = [lease for lease in lease_list
+                       if lease['name'] == lease_name]
 
         if named_lease:
             return self.reservation_client.get_lease(
@@ -78,16 +78,15 @@ class ResourceReservationScenarioTest(manager.ScenarioTest):
                 lease = self.reservation_client.get_lease(lease_id)['lease']
                 if lease:
                     events = lease['events']
-                    return len(filter(lambda evt:
-                                      evt['event_type'] == 'end_lease' and
-                                      evt['status'] == 'DONE',
-                                      events)) > 0
+                    return len([evt for evt in events
+                                if evt['event_type'] == 'end_lease'
+                                and evt['status'] == 'DONE']) > 0
                 else:
                     LOG.info("Lease with id %s is empty", lease_id)
             except Exception as e:
                 LOG.info("Unable to find lease with id %(lease_id)s. "
                          "Exception: %(message)s",
-                         {'lease_id': lease_id, 'message': e.message})
+                         {'lease_id': lease_id, 'message': str(e)})
             return True
 
         if not test_utils.call_until_true(
@@ -99,14 +98,13 @@ class ResourceReservationScenarioTest(manager.ScenarioTest):
 
     def remove_image_snapshot(self, image_name):
         try:
-            image = filter(lambda i:
-                           i['name'] == image_name,
-                           self.image_client.list())
+            image = [i for i in self.image_client.list()
+                     if ['name'] == image_name]
             self.image_client.delete(image)
         except Exception as e:
             LOG.info("Unable to delete %(image_name)s snapshot. "
                      "Exception: %(message)s",
-                     {'image_name': image_name, 'message': e.message})
+                     {'image_name': image_name, 'message': str(e)})
 
     def is_flavor_enough(self, flavor_id, image_id):
         image = self.compute_images_client.show_image(image_id)['image']

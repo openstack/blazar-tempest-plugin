@@ -139,9 +139,8 @@ class TestHostReservationScenario(rrs.ResourceReservationScenarioTest):
     def fetch_aggregate_by_name(self, name):
         aggregates = self.aggr_client.list_aggregates()['aggregates']
         try:
-            aggr = next(iter(filter(lambda aggr: aggr['name'] == name,
-                                    aggregates)))
-        except StopIteration:
+            aggr = [aggr for aggr in aggregates if aggr['name'] == name][0]
+        except IndexError:
             err_msg = "aggregate with name %s doesn't exist." % name
             raise exceptions.NotFound(err_msg)
         return aggr
@@ -163,9 +162,8 @@ class TestHostReservationScenario(rrs.ResourceReservationScenarioTest):
         host = self.fetch_one_compute_host()
         hosts = self.reservation_client.list_host()['hosts']
         try:
-            next(iter(filter(
-                lambda h: h['hypervisor_hostname'] == host['host'], hosts)))
-        except StopIteration:
+            [h for h in hosts if h['hypervisor_hostname'] == host['host']][0]
+        except IndexError:
             self.reservation_client.create_host({'name': host['host']})
         return host
 

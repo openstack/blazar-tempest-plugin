@@ -14,10 +14,10 @@
 #    under the License.
 
 import datetime
-import json
 
 import dateutil.parser
 from oslo_log import log as logging
+from oslo_serialization import jsonutils as json
 from tempest.common import waiters
 from tempest import config
 from tempest import exceptions
@@ -111,10 +111,9 @@ class TestInstanceReservationScenario(rrs.ResourceReservationScenarioTest):
         self.assertTrue(len(events) >= 3)
 
         self.assertFalse(
-            len(filter(lambda evt: evt['event_type'] != 'start_lease' and
-                       evt['event_type'] != 'end_lease' and
-                       evt['event_type'] != 'before_end_lease',
-                       events)) > 0)
+            len([evt for evt in events if evt['event_type'] != 'start_lease'
+                 and evt['event_type'] != 'end_lease'
+                 and evt['event_type'] != 'before_end_lease']) > 0)
 
         # check that only one reservation was made and it is for a vm
         # compare the resource id from the lease with the server.id attribute!
@@ -129,10 +128,10 @@ class TestInstanceReservationScenario(rrs.ResourceReservationScenarioTest):
         try:
             images_list = self.image_client.list()
             self.assertNotEmpty(
-                filter(lambda image: image.name == image_name, images_list))
+                [image for image in images_list if image.name == image_name])
         except Exception as e:
             message = ("Unable to find image with name '%s'. "
-                       "Exception: %s" % (image_name, e.message))
+                       "Exception: %s" % (image_name, str(e)))
             raise exceptions.NotFound(message)
 
     def check_server_status(self, expected_status):

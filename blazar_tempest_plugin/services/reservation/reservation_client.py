@@ -13,8 +13,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import json
-
+from oslo_serialization import jsonutils as json
 from tempest.lib.common import rest_client
 
 
@@ -41,12 +40,12 @@ class ResourceReservationV1Client(rest_client.RestClient):
         return self._response_helper(resp, body)
 
     def create_lease(self, body):
-        body = json.dumps(body)
+        body = json.dump_as_bytes(body)
         resp, body = self.post(self.lease, body=body)
         return self._response_helper(resp, body)
 
     def update_lease(self, lease, body):
-        body = json.dumps(body)
+        body = json.dump_as_bytes(body)
         resp, body = self.put(self.lease_path % lease, body=body)
         return self._response_helper(resp, body)
 
@@ -63,12 +62,12 @@ class ResourceReservationV1Client(rest_client.RestClient):
         return self._response_helper(resp, body)
 
     def create_host(self, body):
-        body = json.dumps(body)
+        body = json.dump_as_bytes(body)
         resp, body = self.post(self.host, body=body)
         return self._response_helper(resp, body)
 
     def update_host(self, host, body):
-        body = json.dumps(body)
+        body = json.dump_as_bytes(body)
         resp, body = self.put(self.host_path % host, body=body)
         return self._response_helper(resp, body)
 
