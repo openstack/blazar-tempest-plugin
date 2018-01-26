@@ -18,11 +18,11 @@ import datetime
 import dateutil.parser
 from oslo_log import log as logging
 from oslo_serialization import jsonutils as json
+from tempest.common import utils
 from tempest.common import waiters
 from tempest import config
 from tempest import exceptions
 from tempest.lib import decorators
-from tempest import test
 
 from blazar_tempest_plugin.tests.scenario import (
     resource_reservation_scenario as rrs)
@@ -142,7 +142,7 @@ class TestInstanceReservationScenario(rrs.ResourceReservationScenarioTest):
     @decorators.skip_because('Instance reservation is not supported yet.',
                              bug='1659200')
     @decorators.attr(type='slow')
-    @test.services('compute', 'network')
+    @utils.services('compute', 'network')
     def test_server_basic_resource_reservation_operation(self):
         start_date = datetime.datetime.utcnow() + datetime.timedelta(minutes=1)
         end_date = start_date + datetime.timedelta(minutes=LEASE_MIN_DURATION)
