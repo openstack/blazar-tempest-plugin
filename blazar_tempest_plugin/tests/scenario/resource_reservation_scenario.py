@@ -37,8 +37,7 @@ class ResourceReservationScenarioTest(manager.ScenarioTest):
     @classmethod
     def setup_clients(cls):
         super(ResourceReservationScenarioTest, cls).setup_clients()
-        if not (CONF.service_available.climate or
-                CONF.service_available.blazar):
+        if not CONF.service_available.blazar:
             raise cls.skipException("Resource reservation support is"
                                     "required")
 

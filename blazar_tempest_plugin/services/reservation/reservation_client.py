@@ -19,7 +19,7 @@ from tempest.lib.common import rest_client
 
 class ResourceReservationV1Client(rest_client.RestClient):
     """Client class for accessing the resource reservation API."""
-    CLIMATECLIENT_VERSION = '1'
+    BLAZARCLIENT_VERSION = '1'
 
     lease = '/leases'
     lease_path = '/leases/%s'
