@@ -20,10 +20,6 @@ service_available_group = cfg.OptGroup(name="service_available",
                                        title="Available OpenStack Services")
 
 service_option = [
-    cfg.BoolOpt("climate",
-                default=True,
-                help="Whether or not climate is expected to be available. "
-                     "This config remains for backward compatibility."),
     cfg.BoolOpt("blazar",
                 default=True,
                 help="Whether or not blazar is expected to be available"),
