@@ -12,6 +12,15 @@ tests:
   GET: compute/v2.1/os-hypervisors
   status: 200
 
+- name: post new host with too long extra capability
+  POST: reservation/v1/os-hosts
+  data:
+      name: $HISTORY['get host name'].$RESPONSE['$.hypervisors[0].hypervisor_hostname']
+      extra_capability_key_should_be_shorter_than_64_ABCDEFGHIJKLMNOPQRSTUVWXYZ: "foo"
+  status: 400
+  response_strings:
+      - Extra capability key too long
+
 - name: post new host
   POST: reservation/v1/os-hosts
   data:
