@@ -1,0 +1,50 @@
+fixtures:
+    - AuthenticationFixture
+
+defaults:
+  request_headers:
+    accept: application/json
+    content-type: application/json
+    X-Auth-Token: $ENVIRON['OS_TOKEN']
+
+tests:
+- name: post new lease with invalid time order
+  POST: reservation/v1/leases
+  data:
+    name: my_lease_wrong_time_order
+    start_date: "2020-11-13 13:13"
+    end_date: "2020-11-13 12:13"
+  status: 400
+  response_strings:
+    - End date must be later than start date.
+
+- name: post new lease without end_date
+  POST: reservation/v1/leases
+  data:
+    name: my_lease_end_date_missing
+    start_date: "now"
+  status: 400
+  response_strings:
+    - Missing parameter end_date
+
+- name: post new lease
+  POST: reservation/v1/leases
+  data:
+    name: my_lease
+    start_date: "2020-12-26 12:00"
+    end_date: "2020-12-27 12:00"
+  status: 201
+
+- name: get new lease
+  GET: reservation/v1/leases
+  response_json_paths:
+    $.leases.`len`: 1
+
+- name: delete new lease
+  DELETE: reservation/v1/leases/$HISTORY['get new lease'].$RESPONSE['$.leases[0].id']
+  status: 204
+
+- name: get no lease
+  GET: reservation/v1/leases
+  response_json_paths:
+    $.leases.`len`: 0
