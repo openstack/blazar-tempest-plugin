@@ -18,6 +18,16 @@ tests:
   response_strings:
     - End date must be later than start date.
 
+- name: post new lease with bogus start time
+  POST: reservation/v1/leases
+  data:
+    name: my_lease_wrong_time_order
+    start_date: "Bogus-date 13:13"
+    end_date: "2020-11-13 12:13"
+  status: 400
+  response_strings:
+    - "Bogus-date 13:13 is an invalid date. Required format: %Y-%m-%d %H:%M"
+
 - name: post new lease without end_date
   POST: reservation/v1/leases
   data:
