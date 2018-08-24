@@ -1,7 +1,11 @@
 - project:
+    templates:
+      - tempest-plugin-jobs
+      - check-requirements
     check:
       jobs:
         - blazar-devstack-dsvm
     gate:
+      queue: blazar
       jobs:
         - blazar-devstack-dsvm
