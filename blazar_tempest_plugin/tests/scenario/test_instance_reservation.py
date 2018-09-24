@@ -75,6 +75,28 @@ class TestInstanceReservationScenario(rrs.ResourceReservationScenarioTest):
             ]
         return body
 
+    def get_lease_expiration_body(self, lease_name):
+        current_time = datetime.datetime.utcnow()
+        end_time = current_time + datetime.timedelta(seconds=90)
+        body = {
+            "start_date": "now",
+            "end_date": end_time.strftime(LEASE_DATE_FORMAT),
+            "name": lease_name,
+            "events": [],
+            }
+        body["reservations"] = [
+            {
+                "resource_type": 'virtual:instance',
+                'vcpus': 1,
+                'memory_mb': 1024,
+                'disk_gb': 10,
+                'amount': 1,
+                'affinity': False,
+                'resource_properties': '',
+                }
+            ]
+        return body
+
     @decorators.attr(type='smoke')
     def test_instance_reservation(self):
         body = self.get_lease_body('instance-scenario')
@@ -127,3 +149,33 @@ class TestInstanceReservationScenario(rrs.ResourceReservationScenarioTest):
         self.reservation_client.delete_lease(lease['id'])
         waiters.wait_for_server_termination(self.os_admin.servers_client,
                                             server1['id'])
+
+    @decorators.attr(type='smoke')
+    def test_lease_expiration(self):
+        body = self.get_lease_expiration_body('instance-scenario-expiration')
+        lease = self.reservation_client.create_lease(body)['lease']
+        reservation = next(iter(lease['reservations']))
+
+        self.wait_for_lease_status(lease['id'], 'ACTIVE')
+
+        create_kwargs = {
+            'image_id': CONF.compute.image_ref,
+            'flavor': reservation['id'],
+            'scheduler_hints': {
+                'group': reservation['server_group_id']
+                },
+            }
+        server1 = self.create_server(clients=self.os_admin,
+                                     **create_kwargs)
+
+        # wait for lease end
+        self.wait_for_lease_end(lease['id'])
+
+        waiters.wait_for_server_termination(self.os_admin.servers_client,
+                                            server1['id'])
+
+        # check the lease status and reservation status
+        lease = self.reservation_client.get_lease(lease['id'])['lease']
+        self.assertTrue(lease['status'] == 'TERMINATED')
+        self.assertTrue('deleted' in
+                        next(iter(lease['reservations']))['status'])
