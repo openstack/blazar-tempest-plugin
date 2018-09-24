@@ -95,17 +95,49 @@ class ResourceReservationScenarioTest(manager.ScenarioTest):
             message = "Timed out waiting for lease to change status to DONE"
             raise exceptions.TimeoutException(message)
 
-    def remove_image_snapshot(self, image_name):
-        try:
-            image = [i for i in self.image_client.list()
-                     if ['name'] == image_name]
-            self.image_client.delete(image)
-        except Exception as e:
-            LOG.info("Unable to delete %(image_name)s snapshot. "
-                     "Exception: %(message)s",
-                     {'image_name': image_name, 'message': str(e)})
+    def wait_for_lease_status(self, lease_id, status):
+
+        def check_lease_status():
+            try:
+                lease = self.reservation_client.get_lease(lease_id)['lease']
+                if lease and lease['status'] == status:
+                    return True
+                else:
+                    LOG.info("Lease with id %s is not %s, but %s",
+                             lease_id, status, lease['status'])
+            except Exception as e:
+                LOG.info("Unable to find lease with id %(lease_id)s. "
+                         "Exception: %(message)s",
+                         {'lease_id': lease_id, 'message': str(e)})
+            return False
+
+        if not test_utils.call_until_true(
+            check_lease_status,
+            CONF.resource_reservation.lease_end_timeout,
+                CONF.resource_reservation.lease_interval):
+            message = ("Timed out waiting for lease to change status "
+                       "to %s" % status)
+            raise exceptions.TimeoutException(message)
 
     def is_flavor_enough(self, flavor_id, image_id):
         image = self.compute_images_client.show_image(image_id)['image']
         flavor = self.flavors_client.show_flavor(flavor_id)['flavor']
         return image['minDisk'] <= flavor['disk']
+
+    def fetch_one_compute_host(self):
+        """Returns the first host listed in nova-compute services."""
+        compute = next(iter(self.os_admin.services_client.
+                            list_services(binary='nova-compute')['services']))
+        return compute
+
+    def _add_host_once(self):
+        host = self.fetch_one_compute_host()
+        hosts = self.reservation_client.list_host()['hosts']
+        try:
+            # TODO(masahito): Fix the check not to depend on '0' fixed check.
+            # When the scenario test covers the monitor resource feature, there
+            # are multiple compute hosts.
+            [h for h in hosts if h['hypervisor_hostname'] == host['host']][0]
+        except IndexError:
+            self.reservation_client.create_host({'name': host['host']})
+        return host

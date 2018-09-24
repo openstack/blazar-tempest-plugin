@@ -15,13 +15,9 @@
 
 import datetime
 
-import dateutil.parser
 from oslo_log import log as logging
-from oslo_serialization import jsonutils as json
-from tempest.common import utils
 from tempest.common import waiters
 from tempest import config
-from tempest import exceptions
 from tempest.lib import decorators
 
 from blazar_tempest_plugin.tests.scenario import (
@@ -33,25 +29,10 @@ LOG = logging.getLogger(__name__)
 
 # same as the one at blazar/manager/service
 LEASE_DATE_FORMAT = "%Y-%m-%d %H:%M"
-LEASE_MIN_DURATION = 2
-# TODO(cmart): LEASE_IMAGE_PREFIX should be extracted from CONF
-LEASE_IMAGE_PREFIX = 'reserved_'
 
 
 class TestInstanceReservationScenario(rrs.ResourceReservationScenarioTest):
-
-    """Test that checks the instance reservation scenario.
-
-    The following is the scenario outline:
-    1) Create an instance with the hint parameters
-    2) check vm was shelved
-    3) check vm became active
-    4) check that a new lease is created on blazar
-    5) check its param
-    6) wait lease end
-    7) make sure VM was snapshoted and removed
-
-    """
+    """A scenario test class that checks the instance reservation feature."""
 
     def setUp(self):
         super(TestInstanceReservationScenario, self).setUp()
@@ -67,115 +48,82 @@ class TestInstanceReservationScenario(rrs.ResourceReservationScenarioTest):
                     image=self.image_ref, flavor=self.flavor_ref
                 )
             )
+        self.host = self._add_host_once()
 
     def tearDown(self):
         super(TestInstanceReservationScenario, self).tearDown()
 
-    def add_keypair(self):
-        self.keypair = self.create_keypair()
+    def get_lease_body(self, lease_name):
+        current_time = datetime.datetime.utcnow()
+        end_time = current_time + datetime.timedelta(hours=1)
+        body = {
+            "start_date": "now",
+            "end_date": end_time.strftime(LEASE_DATE_FORMAT),
+            "name": lease_name,
+            "events": [],
+            }
+        body["reservations"] = [
+            {
+                "resource_type": 'virtual:instance',
+                'vcpus': 1,
+                'memory_mb': 1024,
+                'disk_gb': 10,
+                'amount': 1,
+                'affinity': False,
+                'resource_properties': '',
+                }
+            ]
+        return body
 
-    def boot_server_with_lease_data(self, lease_data, wait):
-        self.add_keypair()
+    @decorators.attr(type='smoke')
+    def test_instance_reservation(self):
+        body = self.get_lease_body('instance-scenario')
+        lease = self.reservation_client.create_lease(body)['lease']
+        reservation = next(iter(lease['reservations']))
 
-        # Create server with lease_data
+        self.wait_for_lease_status(lease['id'], 'ACTIVE')
+
+        # create an instance within the reservation
         create_kwargs = {
-            'key_name': self.keypair['name'],
-            'scheduler_hints': lease_data
-        }
+            'image_id': CONF.compute.image_ref,
+            'flavor': reservation['id'],
+            'scheduler_hints': {
+                'group': reservation['server_group_id']
+                },
+            }
+        server1 = self.create_server(clients=self.os_admin,
+                                     **create_kwargs)
 
-        server = self.create_server(image_id=self.image_ref,
-                                    flavor=self.flavor_ref,
-                                    wait_until=wait,
-                                    **create_kwargs)
-        self.server_id = server['id']
-        self.server_name = server['name']
+        # create another instance within the reservation, which is expected to
+        # fail because we are over the reserved capacity
+        create_kwargs = {
+            'image_id': CONF.compute.image_ref,
+            'flavor': reservation['id'],
+            'scheduler_hints': {
+                'group': reservation['server_group_id']
+                },
+            }
+        server2 = self.create_server(clients=self.os_admin,
+                                     wait_until=None,
+                                     **create_kwargs)
+        waiters.wait_for_server_status(self.os_admin.servers_client,
+                                       server2['id'], 'ERROR',
+                                       raise_on_error=False)
 
-    def check_lease_creation(self, expected_lease_data):
-        server = self.servers_client.show_server(self.server_id)['server']
-        expected_lease_params = json.loads(expected_lease_data['lease_params'])
+        # create an instance without specifying a reservation, which is
+        # expected to fail
+        create_kwargs = {
+            'image_id': CONF.compute.image_ref,
+            'flavor': CONF.compute.flavor_ref,
+            }
+        server3 = self.create_server(clients=self.os_admin,
+                                     wait_until=None,
+                                     **create_kwargs)
+        waiters.wait_for_server_status(self.os_admin.servers_client,
+                                       server3['id'], 'ERROR',
+                                       raise_on_error=False)
 
-        # compare lease_data with data passed as parameter
-        lease = self.get_lease_by_name(expected_lease_params['name'])
-
-        # check lease dates!! (Beware of date format)
-        lease_start_date = dateutil.parser.parse(lease['start_date'])
-        lease_start_date = lease_start_date.strftime(LEASE_DATE_FORMAT)
-        lease_end_date = dateutil.parser.parse(lease['end_date'])
-        lease_end_date = lease_end_date.strftime(LEASE_DATE_FORMAT)
-
-        self.assertEqual(expected_lease_params['start'], lease_start_date)
-        self.assertEqual(expected_lease_params['end'], lease_end_date)
-
-        # check lease events!
-        events = lease['events']
-        self.assertTrue(len(events) >= 3)
-
-        self.assertFalse(
-            len([evt for evt in events if evt['event_type'] != 'start_lease'
-                 and evt['event_type'] != 'end_lease'
-                 and evt['event_type'] != 'before_end_lease']) > 0)
-
-        # check that only one reservation was made and it is for a vm
-        # compare the resource id from the lease with the server.id attribute!
-        reservations = lease['reservations']
-        self.assertTrue(len(reservations) == 1)
-        self.assertEqual(server['id'], reservations[0]['resource_id'])
-        self.assertEqual("virtual:instance",
-                         lease['reservations'][0]['resource_type'])
-
-    def check_server_is_snapshoted(self):
-        image_name = LEASE_IMAGE_PREFIX + self.server_name
-        try:
-            images_list = self.image_client.list()
-            self.assertNotEmpty(
-                [image for image in images_list if image.name == image_name])
-        except Exception as e:
-            message = ("Unable to find image with name '%s'. "
-                       "Exception: %s" % (image_name, str(e)))
-            raise exceptions.NotFound(message)
-
-    def check_server_status(self, expected_status):
-        server = self.servers_client.show_server(self.server_id)['server']
-        self.assertEqual(expected_status, server['status'])
-
-    # TODO(cmart): add blazar to services after pushing this code into tempest
-    @decorators.skip_because('Instance reservation is not supported yet.',
-                             bug='1659200')
-    @decorators.attr(type='slow')
-    @utils.services('compute', 'network')
-    def test_server_basic_resource_reservation_operation(self):
-        start_date = datetime.datetime.utcnow() + datetime.timedelta(minutes=1)
-        end_date = start_date + datetime.timedelta(minutes=LEASE_MIN_DURATION)
-        start_date = start_date.strftime(LEASE_DATE_FORMAT)
-        end_date = end_date.strftime(LEASE_DATE_FORMAT)
-        lease_name = 'scenario_test'
-        lease_data = {
-            'lease_params': '{"name": "%s",'
-                            '"start": "%s",'
-                            '"end": "%s"}'
-                            % (lease_name, start_date, end_date)}
-
-        # boot the server and don't wait until it is active
-        self.boot_server_with_lease_data(lease_data, wait=False)
-        self.check_server_status('SHELVED_OFFLOADED')
-
-        # now, wait until the server is active
-        waiters.wait_for_server_status(self.servers_client,
-                                       self.server_id, 'ACTIVE')
-        self.check_lease_creation(lease_data)
-
-        # wait for lease end
-        created_lease = self.get_lease_by_name(lease_name)
-        self.wait_for_lease_end(created_lease['id'])
-
-        # check server final status
-        self.check_server_is_snapshoted()
-        waiters.wait_for_server_termination(self.servers_client,
-                                            self.server_id)
-
-        # remove created snapshot
-        image_name = LEASE_IMAGE_PREFIX + self.server_name
-        self.remove_image_snapshot(image_name)
-
-        # remove created lease
-        self.delete_lease(created_lease['id'])
+        # delete the lease, which should trigger termination of the instance
+        self.reservation_client.delete_lease(lease['id'])
+        waiters.wait_for_server_termination(self.os_admin.servers_client,
+                                            server1['id'])

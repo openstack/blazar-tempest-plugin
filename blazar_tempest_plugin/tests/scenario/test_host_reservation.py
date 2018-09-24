@@ -43,12 +43,6 @@ class TestHostReservationScenario(rrs.ResourceReservationScenarioTest):
     def tearDown(self):
         super(TestHostReservationScenario, self).tearDown()
 
-    def fetch_one_compute_host(self):
-        """Returns a first host listed in nova-compute services."""
-        compute = next(iter(self.os_admin.services_client.
-                            list_services(binary='nova-compute')['services']))
-        return compute
-
     def get_lease_body(self, lease_name, host_name):
         current_time = datetime.datetime.utcnow()
         end_time = current_time + datetime.timedelta(hours=1)
@@ -157,15 +151,6 @@ class TestHostReservationScenario(rrs.ResourceReservationScenarioTest):
         err_msg = ("hostname %s doesn't exist in aggregate %s."
                    % (host_name, aggregate_name))
         raise exceptions.NotFound(err_msg)
-
-    def _add_host_once(self):
-        host = self.fetch_one_compute_host()
-        hosts = self.reservation_client.list_host()['hosts']
-        try:
-            [h for h in hosts if h['hypervisor_hostname'] == host['host']][0]
-        except IndexError:
-            self.reservation_client.create_host({'name': host['host']})
-        return host
 
     @decorators.attr(type='smoke')
     def test_host_reservation(self):
