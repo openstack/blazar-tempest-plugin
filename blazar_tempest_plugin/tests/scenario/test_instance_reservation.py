@@ -179,3 +179,39 @@ class TestInstanceReservationScenario(rrs.ResourceReservationScenarioTest):
         self.assertTrue(lease['status'] == 'TERMINATED')
         self.assertTrue('deleted' in
                         next(iter(lease['reservations']))['status'])
+
+    @decorators.attr(type='smoke')
+    def test_update_instance_reservation(self):
+        body = self.get_lease_body('instance-scenario-update')
+        lease = self.reservation_client.create_lease(body)['lease']
+        reservation = next(iter(lease['reservations']))
+
+        self.wait_for_lease_status(lease['id'], 'ACTIVE')
+
+        create_kwargs = {
+            'image_id': CONF.compute.image_ref,
+            'flavor': reservation['id'],
+            'scheduler_hints': {
+                'group': reservation['server_group_id']
+                },
+            }
+        server = self.create_server(clients=self.os_admin,
+                                    **create_kwargs)
+
+        # Updating the lease end_date to 1 minute from now to avoid a failure
+        # of the lease update request
+        now = datetime.datetime.utcnow()
+        end_time = now + datetime.timedelta(minutes=1)
+        body = {
+            'end_date': end_time.strftime(LEASE_DATE_FORMAT)
+            }
+        self.reservation_client.update_lease(lease['id'], body)
+
+        waiters.wait_for_server_termination(self.os_admin.servers_client,
+                                            server['id'])
+
+        # check the lease status and reservation status
+        lease = self.reservation_client.get_lease(lease['id'])['lease']
+        self.assertTrue(lease['status'] == 'TERMINATED')
+        self.assertTrue('deleted' in
+                        next(iter(lease['reservations']))['status'])
