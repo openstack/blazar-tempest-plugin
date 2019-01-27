@@ -210,6 +210,10 @@ class TestInstanceReservationScenario(rrs.ResourceReservationScenarioTest):
         waiters.wait_for_server_termination(self.os_admin.servers_client,
                                             server['id'])
 
+        # There is a lag between the server termination and the lease status
+        # transition. Let's wait a bit here.
+        self.wait_for_lease_end(lease['id'])
+
         # check the lease status and reservation status
         lease = self.reservation_client.get_lease(lease['id'])['lease']
         self.assertTrue(lease['status'] == 'TERMINATED')
