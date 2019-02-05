@@ -78,8 +78,8 @@ class ResourceReservationScenarioTest(manager.ScenarioTest):
                 if lease:
                     events = lease['events']
                     return len([evt for evt in events
-                                if evt['event_type'] == 'end_lease'
-                                and evt['status'] == 'DONE']) > 0
+                                if evt['event_type'] == 'end_lease' and
+                                evt['status'] == 'DONE']) > 0
                 else:
                     LOG.info("Lease with id %s is empty", lease_id)
             except Exception as e:
