@@ -294,7 +294,7 @@ class TestHostReservationScenario(rrs.ResourceReservationScenarioTest):
         time.sleep(75)
 
         # update the lease end_time
-        end_time = datetime.datetime.utcnow()
+        end_time = datetime.datetime.utcnow() + datetime.timedelta(seconds=30)
         body = {
             'end_date': end_time.strftime('%Y-%m-%d %H:%M')
             }
