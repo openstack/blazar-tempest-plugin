@@ -19,6 +19,7 @@ from tempest import clients as tempestclients
 from tempest import config
 from tempest import exceptions
 from tempest.lib.common.utils import test_utils
+from tempest.lib import exceptions as lib_exceptions
 
 from blazar_tempest_plugin.services.reservation import (
     reservation_client as clients)
@@ -93,7 +94,7 @@ class ResourceReservationScenarioTest(manager.ScenarioTest):
             CONF.resource_reservation.lease_end_timeout,
                 CONF.resource_reservation.lease_interval):
             message = "Timed out waiting for lease to change status to DONE"
-            raise exceptions.TimeoutException(message)
+            raise lib_exceptions.TimeoutException(message)
 
     def wait_for_lease_status(self, lease_id, status):
 
@@ -117,7 +118,7 @@ class ResourceReservationScenarioTest(manager.ScenarioTest):
                 CONF.resource_reservation.lease_interval):
             message = ("Timed out waiting for lease to change status "
                        "to %s" % status)
-            raise exceptions.TimeoutException(message)
+            raise lib_exceptions.TimeoutException(message)
 
     def is_flavor_enough(self, flavor_id, image_id):
         image = self.compute_images_client.show_image(image_id)['image']
