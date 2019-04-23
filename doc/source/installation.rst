@@ -8,6 +8,6 @@ the same environment where Tempest is installed.
 
 At the command line::
 
-    $ git clone https://git.openstack.org/openstack/blazar-tempest-plugin
+    $ git clone https://opendev.org/openstack/blazar-tempest-plugin
     $ cd blazar-tempest-plugin/
     $ pip install -e .

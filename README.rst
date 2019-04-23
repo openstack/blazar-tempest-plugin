@@ -8,5 +8,5 @@ It contains the tempest plugin for the functional testing of Blazar Project.
 
 * Free software: Apache license
 * Documentation:  https://docs.openstack.org/blazar/latest/
-* Source: https://git.openstack.org/cgit/openstack/blazar-tempest-plugin
+* Source: https://opendev.org/openstack/blazar-tempest-plugin
 * Bugs: https://bugs.launchpad.net/blazar
