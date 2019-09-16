@@ -1,5 +1,5 @@
 ============================================
- blazar_tempest_tests Release Notes
+ blazar-tempest-plugin Release Notes
 ============================================
 
 .. toctree::

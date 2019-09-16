@@ -37,12 +37,12 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'openstack'
+project = u'blazar-tempest-plugin'
 copyright = u'2017, OpenStack Developers'
 
 # openstackdocstheme options
-repository_name = 'openstack/openstack'
-bug_project = 'blazar_tempest_tests'
+repository_name = 'openstack/blazar-tempest-plugin'
+bug_project = 'blazar'
 bug_tag = ''
 
 # If true, '()' will be appended to :func: etc. cross-reference text.

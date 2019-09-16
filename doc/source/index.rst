@@ -3,9 +3,9 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-====================================================
-Welcome to the documentation of blazar_tempest_tests
-====================================================
+=====================================================
+Welcome to the documentation of blazar-tempest-plugin
+=====================================================
 
 Contents:
 

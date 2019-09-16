@@ -1,6 +1,6 @@
 [run]
 branch = True
-source = blazar_tempest_tests
+source = blazar_tempest_plugin
 
 [report]
 ignore_errors = True

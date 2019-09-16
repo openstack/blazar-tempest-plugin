@@ -52,12 +52,12 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'blazar_tempest_tests Release Notes'
+project = u'blazar-tempest-plugin Release Notes'
 copyright = u'2017, OpenStack Developers'
 
 # openstackdocstheme options
-repository_name = 'openstack/openstack'
-bug_project = 'blazar_tempest_tests'
+repository_name = 'openstack/blazar-tempest-plugin'
+bug_project = 'blazar'
 bug_tag = ''
 
 # The version info for the project you're documenting, acts as replacement for
@@ -191,7 +191,7 @@ html_static_path = ['_static']
 # html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'blazar_tempest_testsReleaseNotesdoc'
+htmlhelp_basename = 'blazar-tempest-pluginReleaseNotesdoc'
 
 
 # -- Options for LaTeX output ---------------------------------------------
@@ -211,8 +211,8 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    ('index', 'blazar_tempest_testsReleaseNotes.tex',
-     u'blazar_tempest_tests  Release Notes Documentation',
+    ('index', 'blazar-tempest-pluginReleaseNotes.tex',
+     u'blazar-tempest-plugin  Release Notes Documentation',
      u'OpenStack Foundation', 'manual'),
 ]
 
@@ -242,8 +242,8 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'blazar_tempest_testsrereleasenotes',
-     u'blazar_tempest_tests  Release Notes Documentation',
+    ('index', 'blazar-tempest-pluginrereleasenotes',
+     u'blazar-tempest-plugin  Release Notes Documentation',
      [u'OpenStack Foundation'], 1)
 ]
 
@@ -257,9 +257,9 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    ('index', 'blazar_tempest_tests ReleaseNotes',
-     u'blazar_tempest_tests Release Notes Documentation',
-     u'OpenStack Foundation', 'blazar_tempest_testsReleaseNotes',
+    ('index', 'blazar-tempest-plugin ReleaseNotes',
+     u'blazar-tempest-plugin Release Notes Documentation',
+     u'OpenStack Foundation', 'blazar-tempest-pluginReleaseNotes',
      'One line description of project.',
      'Miscellaneous'),
 ]
