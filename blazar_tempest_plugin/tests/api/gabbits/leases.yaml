@@ -12,8 +12,8 @@ tests:
   POST: reservation/v1/leases
   data:
     name: my_lease_wrong_time_order
-    start_date: "2020-11-13 13:13"
-    end_date: "2020-11-13 12:13"
+    start_date: "2050-11-13 13:13"
+    end_date: "2050-11-13 12:13"
   status: 400
   response_strings:
     - End date must be later than start date.
@@ -23,7 +23,7 @@ tests:
   data:
     name: my_lease_wrong_time_order
     start_date: "Bogus-date 13:13"
-    end_date: "2020-11-13 12:13"
+    end_date: "2050-11-13 12:13"
   status: 400
   response_strings:
     - "Bogus-date 13:13 is an invalid date. Required format: %Y-%m-%d %H:%M"
@@ -41,8 +41,8 @@ tests:
   POST: reservation/v1/leases
   data:
     name: my_lease
-    start_date: "2020-12-26 12:00"
-    end_date: "2020-12-27 12:00"
+    start_date: "2050-12-26 12:00"
+    end_date: "2050-12-27 12:00"
   status: 201
 
 - name: get new lease

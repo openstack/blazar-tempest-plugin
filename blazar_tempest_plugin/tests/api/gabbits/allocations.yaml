@@ -22,8 +22,8 @@ tests:
   POST: reservation/v1/leases
   data:
     name: lease1
-    start_date: "2020-01-01 10:00"
-    end_date: "2020-01-01 11:00"
+    start_date: "2050-01-01 10:00"
+    end_date: "2050-01-01 11:00"
     reservations:
       - resource_type: physical:host
         min: 1
@@ -36,8 +36,8 @@ tests:
   POST: reservation/v1/leases
   data:
     name: lease2
-    start_date: "2020-01-01 12:00"
-    end_date: "2020-01-01 13:00"
+    start_date: "2050-01-01 12:00"
+    end_date: "2050-01-01 13:00"
     reservations:
       - resource_type: physical:host
         min: 1
