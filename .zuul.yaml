@@ -6,7 +6,31 @@
     check:
       jobs:
         - blazar-devstack-dsvm
+        - blazar-devstack-dsvm-ussuri
+        - blazar-devstack-dsvm-train
+        - blazar-devstack-dsvm-stein
     gate:
       queue: blazar
       jobs:
         - blazar-devstack-dsvm
+
+- job:
+    name: blazar-devstack-dsvm-ussuri
+    parent: blazar-devstack-dsvm
+    override-checkout: stable/ussuri
+
+- job:
+    name: blazar-devstack-dsvm-train
+    parent: blazar-devstack-dsvm
+    override-checkout: stable/train
+    vars:
+      devstack_localrc:
+        USE_PYTHON3: True
+
+- job:
+    name: blazar-devstack-dsvm-stein
+    parent: blazar-devstack-dsvm
+    override-checkout: stable/stein
+    vars:
+      devstack_localrc:
+        USE_PYTHON3: True
