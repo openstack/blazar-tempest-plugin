@@ -41,9 +41,10 @@ project = u'blazar-tempest-plugin'
 copyright = u'2017, OpenStack Developers'
 
 # openstackdocstheme options
-repository_name = 'openstack/blazar-tempest-plugin'
-bug_project = 'blazar'
-bug_tag = ''
+openstackdocs_repo_name = 'openstack/blazar-tempest-plugin'
+openstackdocs_pdf_link = True
+openstackdocs_bug_project = 'blazar'
+openstackdocs_bug_tag = ''
 
 # If true, '()' will be appended to :func: etc. cross-reference text.
 add_function_parentheses = True
@@ -53,7 +54,7 @@ add_function_parentheses = True
 add_module_names = True
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = 'sphinx'
+pygments_style = 'native'
 
 # -- Options for HTML output --------------------------------------------------
 
