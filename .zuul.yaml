@@ -5,31 +5,81 @@
       - publish-openstack-docs-pti
     check:
       jobs:
-        - blazar-devstack-dsvm
-        - blazar-devstack-dsvm-ussuri
-        - blazar-devstack-dsvm-train
-        - blazar-devstack-dsvm-stein
+        - blazar-tempest-plugin-base
+        - blazar-tempest-plugin-ipv6-only
+        - blazar-tempest-plugin-ussuri
+        - blazar-tempest-plugin-train
+        - blazar-tempest-plugin-stein
     gate:
       queue: blazar
       jobs:
-        - blazar-devstack-dsvm
+        - blazar-tempest-plugin-base
 
 - job:
-    name: blazar-devstack-dsvm-ussuri
-    parent: blazar-devstack-dsvm
+    name: blazar-tempest-plugin-base
+    description: |
+      This is a base devstack job for Blazar.
+      Former names for this job were:
+        * blazar-devstack-dsvm
+    parent: devstack-tempest
+    required-projects: &blazar_required_projects
+      - opendev.org/openstack/blazar
+      - opendev.org/openstack/blazar-nova
+      - opendev.org/openstack/python-blazarclient
+      - opendev.org/openstack/blazar-tempest-plugin
+    host-vars:
+      controller:
+        devstack_plugins:
+          blazar: https://opendev.org/openstack/blazar
+    vars: &blazar_base_vars
+      tempest_test_regex: '^blazar_tempest_plugin'
+      tox_envlist: all
+      devstack_services:
+        blazar: true
+        blazar-a: true
+        blazar-m: true
+      tempest_plugins:
+        - blazar-tempest-plugin
+      tempest_concurrency: 1
+    irrelevant-files:
+      - ^.*\.rst$
+      - ^doc/.*$
+      - ^releasenotes/.*$
+
+- job:
+    name: blazar-tempest-plugin-ipv6-only
+    description: |
+      This is a base IPv6 devstack job for Blazar
+      Former names for this job were:
+        * blazar-devstack-dsvm-ipv6-only
+    parent: devstack-tempest-ipv6
+    required-projects: *blazar_required_projects
+    host-vars:
+      controller:
+        devstack_plugins:
+          blazar: https://opendev.org/openstack/blazar
+    vars: *blazar_base_vars
+    irrelevant-files:
+      - ^.*\.rst$
+      - ^doc/.*$
+      - ^releasenotes/.*$
+
+- job:
+    name: blazar-tempest-plugin-ussuri
+    parent: blazar-tempest-plugin-base
     override-checkout: stable/ussuri
 
 - job:
-    name: blazar-devstack-dsvm-train
-    parent: blazar-devstack-dsvm
+    name: blazar-tempest-plugin-train
+    parent: blazar-tempest-plugin-base
     override-checkout: stable/train
     vars:
       devstack_localrc:
         USE_PYTHON3: True
 
 - job:
-    name: blazar-devstack-dsvm-stein
-    parent: blazar-devstack-dsvm
+    name: blazar-tempest-plugin-stein
+    parent: blazar-tempest-plugin-base
     override-checkout: stable/stein
     vars:
       devstack_localrc:
