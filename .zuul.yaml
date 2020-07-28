@@ -67,11 +67,13 @@
 - job:
     name: blazar-tempest-plugin-ussuri
     parent: blazar-tempest-plugin-base
+    nodeset: openstack-single-node-bionic
     override-checkout: stable/ussuri
 
 - job:
     name: blazar-tempest-plugin-train
     parent: blazar-tempest-plugin-base
+    nodeset: openstack-single-node-bionic
     override-checkout: stable/train
     vars:
       devstack_localrc:
@@ -80,6 +82,7 @@
 - job:
     name: blazar-tempest-plugin-stein
     parent: blazar-tempest-plugin-base
+    nodeset: openstack-single-node-bionic
     override-checkout: stable/stein
     vars:
       devstack_localrc:
