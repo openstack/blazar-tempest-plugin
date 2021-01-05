@@ -85,5 +85,18 @@
     nodeset: openstack-single-node-bionic
     override-checkout: stable/stein
     vars:
+      devstack_services:
+        # Disable unneeded services.
+        etcd3: false
+        s-account: false
+        s-container: false
+        s-object: false
+        s-proxy: false
+        c-api: false
+        c-bak: false
+        c-sch: false
+        c-vol: false
+        cinder: false
+        horizon: false
       devstack_localrc:
         USE_PYTHON3: True

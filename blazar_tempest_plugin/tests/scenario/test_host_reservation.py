@@ -316,5 +316,5 @@ class TestHostReservationScenario(rrs.ResourceReservationScenarioTest):
 
         # check the reservation status
         lease = self.reservation_client.get_lease(lease_id)['lease']
-        self.assertTrue('deleted'in
+        self.assertTrue('deleted' in
                         next(iter(lease['reservations']))['status'])
