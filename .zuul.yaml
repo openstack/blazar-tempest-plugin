@@ -7,9 +7,10 @@
       jobs:
         - blazar-tempest-plugin-base
         - blazar-tempest-plugin-ipv6-only
+        - blazar-tempest-plugin-wallaby
+        - blazar-tempest-plugin-victoria
         - blazar-tempest-plugin-ussuri
         - blazar-tempest-plugin-train
-        - blazar-tempest-plugin-stein
     gate:
       queue: blazar
       jobs:
@@ -65,6 +66,16 @@
       - ^releasenotes/.*$
 
 - job:
+    name: blazar-tempest-plugin-wallaby
+    parent: blazar-tempest-plugin-base
+    override-checkout: stable/wallaby
+
+- job:
+    name: blazar-tempest-plugin-victoria
+    parent: blazar-tempest-plugin-base
+    override-checkout: stable/victoria
+
+- job:
     name: blazar-tempest-plugin-ussuri
     parent: blazar-tempest-plugin-base
     nodeset: openstack-single-node-bionic
@@ -76,27 +87,5 @@
     nodeset: openstack-single-node-bionic
     override-checkout: stable/train
     vars:
-      devstack_localrc:
-        USE_PYTHON3: True
-
-- job:
-    name: blazar-tempest-plugin-stein
-    parent: blazar-tempest-plugin-base
-    nodeset: openstack-single-node-bionic
-    override-checkout: stable/stein
-    vars:
-      devstack_services:
-        # Disable unneeded services.
-        etcd3: false
-        s-account: false
-        s-container: false
-        s-object: false
-        s-proxy: false
-        c-api: false
-        c-bak: false
-        c-sch: false
-        c-vol: false
-        cinder: false
-        horizon: false
       devstack_localrc:
         USE_PYTHON3: True
