@@ -7,10 +7,10 @@
       jobs:
         - blazar-tempest-plugin-base
         - blazar-tempest-plugin-ipv6-only
+        - blazar-tempest-plugin-xena
         - blazar-tempest-plugin-wallaby
         - blazar-tempest-plugin-victoria
         - blazar-tempest-plugin-ussuri
-        - blazar-tempest-plugin-train
     gate:
       queue: blazar
       jobs:
@@ -66,6 +66,11 @@
       - ^releasenotes/.*$
 
 - job:
+    name: blazar-tempest-plugin-xena
+    parent: blazar-tempest-plugin-base
+    override-checkout: stable/xena
+
+- job:
     name: blazar-tempest-plugin-wallaby
     parent: blazar-tempest-plugin-base
     override-checkout: stable/wallaby
@@ -80,12 +85,3 @@
     parent: blazar-tempest-plugin-base
     nodeset: openstack-single-node-bionic
     override-checkout: stable/ussuri
-
-- job:
-    name: blazar-tempest-plugin-train
-    parent: blazar-tempest-plugin-base
-    nodeset: openstack-single-node-bionic
-    override-checkout: stable/train
-    vars:
-      devstack_localrc:
-        USE_PYTHON3: True
