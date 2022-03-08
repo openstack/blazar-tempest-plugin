@@ -17,7 +17,6 @@
 import subprocess
 
 from oslo_log import log
-from oslo_serialization import jsonutils as json
 
 from tempest.common import compute
 from tempest.common import image as common_image
@@ -36,7 +35,7 @@ CONF = config.CONF
 LOG = log.getLogger(__name__)
 
 
-class ScenarioTest(tempest.test.BaseTestCase):
+class ScenarioTest(tempest.scenario.manager.ScenarioTest):
     """Base class for scenario tests. Uses tempest own clients. """
 
     credentials = ['primary']
@@ -423,53 +422,6 @@ class ScenarioTest(tempest.test.BaseTestCase):
         # network debug is called as part of ssh init
         if not isinstance(exc, lib_exc.SSHTimeout):
             LOG.debug('Network information on a devstack host')
-
-    def create_server_snapshot(self, server, name=None):
-        # Glance client
-        _image_client = self.image_client
-        # Compute client
-        _images_client = self.compute_images_client
-        if name is None:
-            name = data_utils.rand_name(self.__class__.__name__ + 'snapshot')
-        LOG.debug("Creating a snapshot image for server: %s", server['name'])
-        image = _images_client.create_image(server['id'], name=name)
-        image_id = image.response['location'].split('images/')[1]
-        waiters.wait_for_image_status(_image_client, image_id, 'active')
-
-        self.addCleanup(_image_client.wait_for_resource_deletion,
-                        image_id)
-        self.addCleanup(test_utils.call_and_ignore_notfound_exc,
-                        _image_client.delete_image, image_id)
-
-        if CONF.image_feature_enabled.api_v1:
-            # In glance v1 the additional properties are stored in the headers.
-            resp = _image_client.check_image(image_id)
-            snapshot_image = common_image.get_image_meta_from_headers(resp)
-            image_props = snapshot_image.get('properties', {})
-        else:
-            # In glance v2 the additional properties are flattened.
-            snapshot_image = _image_client.show_image(image_id)
-            image_props = snapshot_image
-
-        bdm = image_props.get('block_device_mapping')
-        if bdm:
-            bdm = json.loads(bdm)
-            if bdm and 'snapshot_id' in bdm[0]:
-                snapshot_id = bdm[0]['snapshot_id']
-                self.addCleanup(
-                    self.snapshots_client.wait_for_resource_deletion,
-                    snapshot_id)
-                self.addCleanup(test_utils.call_and_ignore_notfound_exc,
-                                self.snapshots_client.delete_snapshot,
-                                snapshot_id)
-                waiters.wait_for_volume_resource_status(self.snapshots_client,
-                                                        snapshot_id,
-                                                        'available')
-        image_name = snapshot_image['name']
-        self.assertEqual(name, image_name)
-        LOG.debug("Created snapshot image %s for server %s",
-                  image_name, server['name'])
-        return snapshot_image
 
     def nova_volume_attach(self, server, volume_to_attach):
         volume = self.servers_client.attach_volume(
