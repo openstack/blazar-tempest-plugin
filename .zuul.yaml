@@ -1,4 +1,5 @@
 - project:
+    queue: blazar
     templates:
       - tempest-plugin-jobs
       - check-requirements
@@ -11,7 +12,6 @@
         - blazar-tempest-plugin-xena
         - blazar-tempest-plugin-wallaby
     gate:
-      queue: blazar
       jobs:
         - blazar-tempest-plugin-base
 
