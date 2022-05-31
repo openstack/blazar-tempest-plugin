@@ -10,7 +10,6 @@
         - blazar-tempest-plugin-yoga
         - blazar-tempest-plugin-xena
         - blazar-tempest-plugin-wallaby
-        - blazar-tempest-plugin-victoria
     gate:
       queue: blazar
       jobs:
@@ -79,8 +78,3 @@
     name: blazar-tempest-plugin-wallaby
     parent: blazar-tempest-plugin-base
     override-checkout: stable/wallaby
-
-- job:
-    name: blazar-tempest-plugin-victoria
-    parent: blazar-tempest-plugin-base
-    override-checkout: stable/victoria
