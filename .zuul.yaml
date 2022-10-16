@@ -67,14 +67,17 @@
 - job:
     name: blazar-tempest-plugin-yoga
     parent: blazar-tempest-plugin-base
+    nodeset: openstack-single-node-focal
     override-checkout: stable/yoga
 
 - job:
     name: blazar-tempest-plugin-xena
     parent: blazar-tempest-plugin-base
+    nodeset: openstack-single-node-focal
     override-checkout: stable/xena
 
 - job:
     name: blazar-tempest-plugin-wallaby
     parent: blazar-tempest-plugin-base
+    nodeset: openstack-single-node-focal
     override-checkout: stable/wallaby
