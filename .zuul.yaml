@@ -8,6 +8,7 @@
       jobs:
         - blazar-tempest-plugin-base
         - blazar-tempest-plugin-ipv6-only
+        - blazar-tempest-plugin-zed
         - blazar-tempest-plugin-yoga
         - blazar-tempest-plugin-xena
         - blazar-tempest-plugin-wallaby
@@ -63,6 +64,12 @@
       - ^.*\.rst$
       - ^doc/.*$
       - ^releasenotes/.*$
+
+- job:
+    name: blazar-tempest-plugin-zed
+    parent: blazar-tempest-plugin-base
+    nodeset: openstack-single-node-focal
+    override-checkout: stable/zed
 
 - job:
     name: blazar-tempest-plugin-yoga
