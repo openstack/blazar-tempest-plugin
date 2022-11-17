@@ -306,6 +306,9 @@ class TestHostReservationScenario(rrs.ResourceReservationScenarioTest):
         waiters.wait_for_server_termination(self.os_admin.servers_client,
                                             server['id'])
 
+        # wait long enough for the lease deletion to be complete
+        time.sleep(30)
+
         # check that the host aggregate was deleted
         self.assertRaises(exceptions.NotFound,
                           self.fetch_aggregate_by_name, reservation_id)
