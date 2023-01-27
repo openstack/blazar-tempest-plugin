@@ -11,7 +11,6 @@
         - blazar-tempest-plugin-zed
         - blazar-tempest-plugin-yoga
         - blazar-tempest-plugin-xena
-        - blazar-tempest-plugin-wallaby
     gate:
       jobs:
         - blazar-tempest-plugin-base
@@ -82,9 +81,3 @@
     parent: blazar-tempest-plugin-base
     nodeset: openstack-single-node-focal
     override-checkout: stable/xena
-
-- job:
-    name: blazar-tempest-plugin-wallaby
-    parent: blazar-tempest-plugin-base
-    nodeset: openstack-single-node-focal
-    override-checkout: stable/wallaby
