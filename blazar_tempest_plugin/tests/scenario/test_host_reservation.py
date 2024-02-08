@@ -16,7 +16,6 @@ import datetime
 import time
 
 from oslo_log import log as logging
-from six.moves import range
 from tempest.common import waiters
 from tempest import config
 from tempest.lib import decorators
