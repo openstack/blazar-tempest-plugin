@@ -36,7 +36,7 @@ class TestInstanceReservationScenario(rrs.ResourceReservationScenarioTest):
 
     def setUp(self):
         super(TestInstanceReservationScenario, self).setUp()
-        # Setup image and flavor the test instance
+        # Setup image and flavor for the test instance
         # Support both configured and injected values
         if not hasattr(self, 'image_ref'):
             self.image_ref = CONF.compute.image_ref
