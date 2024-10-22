@@ -7,6 +7,7 @@
     check:
       jobs:
         - blazar-tempest-plugin-base
+        - blazar-tempest-plugin-jammy
         - blazar-tempest-plugin-ipv6-only
         - blazar-tempest-plugin-2024-2
         - blazar-tempest-plugin-2024-1
@@ -14,6 +15,7 @@
     gate:
       jobs:
         - blazar-tempest-plugin-base
+        - blazar-tempest-plugin-jammy
 
 - job:
     name: blazar-tempest-plugin-base
@@ -45,6 +47,14 @@
       - ^.*\.rst$
       - ^doc/.*$
       - ^releasenotes/.*$
+
+# TODO(gmann): As per the 2025.1 testing runtime, we need to run at least
+# one job on jammy. This job can be removed in the next cycle(2025.2).
+- job:
+    name: blazar-tempest-plugin-jammy
+    description: This is integrated job testing on Ubuntu jammy(22.04)
+    parent: blazar-tempest-plugin-base
+    nodeset: openstack-single-node-jammy
 
 - job:
     name: blazar-tempest-plugin-ipv6-only

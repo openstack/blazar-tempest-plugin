@@ -142,7 +142,7 @@ class TestHostReservationScenario(rrs.ResourceReservationScenarioTest):
         for i in range(self.MAX_RETRY):
             try:
                 aggr = self.fetch_aggregate_by_name(aggregate_name)
-                self.assertTrue(host_name in aggr['hosts'])
+                self.assertIn(host_name, aggr['hosts'])
                 return
             except Exception:
                 pass
@@ -159,7 +159,7 @@ class TestHostReservationScenario(rrs.ResourceReservationScenarioTest):
 
         # check the host is in freepool
         freepool = self.fetch_aggregate_by_name('freepool')
-        self.assertTrue(host['host'] in freepool['hosts'])
+        self.assertIn(host['host'], freepool['hosts'])
 
         # try creating a new lease with a missing parameter
         body = self.get_lease_body_missing_param('scenario-1-missing-param',
@@ -250,12 +250,12 @@ class TestHostReservationScenario(rrs.ResourceReservationScenarioTest):
 
         # check that the host is back in the freepool
         freepool = self.fetch_aggregate_by_name('freepool')
-        self.assertTrue(host['host'] in freepool['hosts'])
+        self.assertIn(host['host'], freepool['hosts'])
 
         # check the reservation status
         lease = self.reservation_client.get_lease(lease_id)['lease']
-        self.assertTrue('deleted' in
-                        next(iter(lease['reservations']))['status'])
+        self.assertIn('deleted',
+                      next(iter(lease['reservations']))['status'])
 
     @decorators.attr(type='smoke')
     def test_update_host_reservation(self):
@@ -314,7 +314,7 @@ class TestHostReservationScenario(rrs.ResourceReservationScenarioTest):
 
         # check that the host is back in the freepool
         freepool = self.fetch_aggregate_by_name('freepool')
-        self.assertTrue(host['host'] in freepool['hosts'])
+        self.assertIn(host['host'], freepool['hosts'])
 
         # check the reservation status
         lease = self.reservation_client.get_lease(lease_id)['lease']
