@@ -79,6 +79,12 @@
     parent: blazar-tempest-plugin-base
     nodeset: openstack-single-node-jammy
     override-checkout: stable/2024.2
+    vars:
+      devstack_local_conf:
+        test-config:
+          $TEMPEST_CONFIG:
+            resource_reservation:
+              flavor_instance_plugin: true
 
 - job:
     name: blazar-tempest-plugin-2024-1

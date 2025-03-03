@@ -37,7 +37,7 @@ ResourceReservationGroup = [
                help="The endpoint type to use for the resource_reservation "
                     "service."),
     cfg.BoolOpt('flavor_instance_plugin',
-                default=True,
+                default=False,
                 help="Whether to test flavor-based instance reservation"),
     cfg.IntOpt('lease_interval',
                default=10,
