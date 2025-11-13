@@ -8,9 +8,9 @@
       jobs:
         - blazar-tempest-plugin-base
         - blazar-tempest-plugin-ipv6-only
+        - blazar-tempest-plugin-2025-2
         - blazar-tempest-plugin-2025-1
         - blazar-tempest-plugin-2024-2
-        - blazar-tempest-plugin-2024-1
     gate:
       jobs:
         - blazar-tempest-plugin-base
@@ -81,6 +81,18 @@
     nodeset: openstack-single-node-jammy
 
 - job:
+    name: blazar-tempest-plugin-2025-2
+    parent: blazar-tempest-plugin-base
+    nodeset: openstack-single-node-noble
+    override-checkout: stable/2025.2
+    vars:
+      devstack_local_conf:
+        test-config:
+          $TEMPEST_CONFIG:
+            resource_reservation:
+              flavor_instance_plugin: true
+
+- job:
     name: blazar-tempest-plugin-2025-1
     parent: blazar-tempest-plugin-base
     nodeset: openstack-single-node-noble
@@ -103,15 +115,3 @@
           $TEMPEST_CONFIG:
             resource_reservation:
               flavor_instance_plugin: true
-
-- job:
-    name: blazar-tempest-plugin-2024-1
-    parent: blazar-tempest-plugin-base
-    nodeset: openstack-single-node-jammy
-    override-checkout: stable/2024.1
-    vars:
-      devstack_local_conf:
-        test-config:
-          $TEMPEST_CONFIG:
-            resource_reservation:
-              flavor_instance_plugin: false
