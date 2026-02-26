@@ -15,8 +15,6 @@
 
 import datetime
 
-import testtools
-
 from oslo_log import log as logging
 from tempest.common import waiters
 from tempest import config
@@ -76,9 +74,6 @@ class TestFlavorReservationScenario(rrs.ResourceReservationScenarioTest):
         return body
 
     @decorators.attr(type='smoke')
-    @testtools.skipUnless(
-        CONF.resource_reservation.flavor_instance_plugin,
-        'Flavor-based instance reservation tests are disabled.')
     def test_flavor_instance_reservation(self):
         body = self.get_lease_body('flavor-instance-scenario')
         lease = self.reservation_client.create_lease(body)['lease']
