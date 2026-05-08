@@ -10,7 +10,6 @@
         - blazar-tempest-plugin-ipv6-only
         - blazar-tempest-plugin-2025-2
         - blazar-tempest-plugin-2025-1
-        - blazar-tempest-plugin-2024-2
     gate:
       jobs:
         - blazar-tempest-plugin-base
@@ -91,9 +90,3 @@
     parent: blazar-tempest-plugin-base
     nodeset: openstack-single-node-noble
     override-checkout: stable/2025.1
-
-- job:
-    name: blazar-tempest-plugin-2024-2
-    parent: blazar-tempest-plugin-base
-    nodeset: openstack-single-node-jammy
-    override-checkout: stable/2024.2
