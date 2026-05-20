@@ -32,4 +32,4 @@ Repository = "https://opendev.org/openstack/blazar-tempest-plugin"
 blazar_tests = "blazar_tempest_plugin.plugin:BlazarTempestPlugin"
 
 [tool.setuptools.packages.find]
-include = ["blazar_tempest_plugin"]
+include = ["blazar_tempest_plugin*"]
