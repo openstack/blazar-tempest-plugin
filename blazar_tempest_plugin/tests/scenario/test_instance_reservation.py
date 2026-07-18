@@ -16,6 +16,7 @@
 import datetime
 
 from oslo_log import log as logging
+from oslo_utils import timeutils
 from tempest.common import waiters
 from tempest import config
 from tempest.lib import decorators
@@ -54,7 +55,7 @@ class TestInstanceReservationScenario(rrs.ResourceReservationScenarioTest):
         super(TestInstanceReservationScenario, self).tearDown()
 
     def get_lease_body(self, lease_name):
-        current_time = datetime.datetime.utcnow()
+        current_time = timeutils.utcnow()
         end_time = current_time + datetime.timedelta(hours=1)
         body = {
             "start_date": "now",
@@ -76,7 +77,7 @@ class TestInstanceReservationScenario(rrs.ResourceReservationScenarioTest):
         return body
 
     def get_lease_expiration_body(self, lease_name):
-        current_time = datetime.datetime.utcnow()
+        current_time = timeutils.utcnow()
         end_time = current_time + datetime.timedelta(seconds=90)
         body = {
             "start_date": "now",
@@ -200,7 +201,7 @@ class TestInstanceReservationScenario(rrs.ResourceReservationScenarioTest):
 
         # Updating the lease end_date to 1 minute from now to avoid a failure
         # of the lease update request
-        now = datetime.datetime.utcnow()
+        now = timeutils.utcnow()
         end_time = now + datetime.timedelta(minutes=1)
         body = {
             'end_date': end_time.strftime(LEASE_DATE_FORMAT)
