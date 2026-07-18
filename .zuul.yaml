@@ -8,6 +8,7 @@
       jobs:
         - blazar-tempest-plugin-base
         - blazar-tempest-plugin-ipv6-only
+        - blazar-tempest-plugin-2026-1
         - blazar-tempest-plugin-2025-2
         - blazar-tempest-plugin-2025-1
     gate:
@@ -78,6 +79,12 @@
     description: This is integrated job testing on Ubuntu jammy(22.04)
     parent: blazar-tempest-plugin-base
     nodeset: openstack-single-node-jammy
+
+- job:
+    name: blazar-tempest-plugin-2026-1
+    parent: blazar-tempest-plugin-base
+    nodeset: openstack-single-node-noble
+    override-checkout: stable/2026.1
 
 - job:
     name: blazar-tempest-plugin-2025-2
