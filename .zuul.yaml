@@ -41,6 +41,8 @@
         - blazar-tempest-plugin
       tempest_concurrency: 1
     irrelevant-files:
+      - ^\.gitignore$
+      - ^\.gitreview$
       - ^.*\.rst$
       - ^doc/.*$
       - ^releasenotes/.*$
