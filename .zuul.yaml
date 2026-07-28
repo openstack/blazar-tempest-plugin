@@ -41,12 +41,13 @@
       tempest_plugins:
         - blazar-tempest-plugin
       tempest_concurrency: 1
-    irrelevant-files:
+    irrelevant-files: &irrelevant_files
       - ^\.gitignore$
       - ^\.gitreview$
       - ^.*\.rst$
       - ^doc/.*$
       - ^releasenotes/.*$
+      - ^tox\.ini$
 
 # TODO(gmann): As per the 2025.1 testing runtime, we need to run at least
 # one job on jammy. This job run on 2025.1 gate so remove once that is EOL.
@@ -69,10 +70,7 @@
         devstack_plugins:
           blazar: https://opendev.org/openstack/blazar
     vars: *blazar_base_vars
-    irrelevant-files:
-      - ^.*\.rst$
-      - ^doc/.*$
-      - ^releasenotes/.*$
+    irrelevant-files: *irrelevant_files
 
 # TODO(gmann): As per the 2025.1 testing runtime, we need to run at least
 # one job on jammy. This job run on 2025.1 gate so remove it once that is EOL.
