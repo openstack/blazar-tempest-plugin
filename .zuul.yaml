@@ -74,14 +74,6 @@
       - ^doc/.*$
       - ^releasenotes/.*$
 
-# TODO(gmann): As per the 2025.1 testing runtime, we need to run at least
-# one job on jammy. This job run on 2025.1 gate so remove it once that is EOL.
-- job:
-    name: blazar-tempest-plugin-jammy
-    description: This is integrated job testing on Ubuntu jammy(22.04)
-    parent: blazar-tempest-plugin-base
-    nodeset: openstack-single-node-jammy
-
 - job:
     name: blazar-tempest-plugin-2026-1
     parent: blazar-tempest-plugin-base
