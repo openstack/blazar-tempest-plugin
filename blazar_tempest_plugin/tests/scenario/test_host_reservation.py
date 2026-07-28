@@ -16,6 +16,7 @@ import datetime
 import time
 
 from oslo_log import log as logging
+from oslo_utils import timeutils
 from tempest.common import waiters
 from tempest import config
 from tempest.lib import decorators
@@ -43,7 +44,7 @@ class TestHostReservationScenario(rrs.ResourceReservationScenarioTest):
         super(TestHostReservationScenario, self).tearDown()
 
     def get_lease_body(self, lease_name, host_name):
-        current_time = datetime.datetime.utcnow()
+        current_time = timeutils.utcnow()
         end_time = current_time + datetime.timedelta(hours=1)
         body = {
             "start_date": "now",
@@ -65,7 +66,7 @@ class TestHostReservationScenario(rrs.ResourceReservationScenarioTest):
         return body
 
     def get_lease_body_missing_param(self, lease_name, host_name):
-        current_time = datetime.datetime.utcnow()
+        current_time = timeutils.utcnow()
         end_time = current_time + datetime.timedelta(hours=1)
         body = {
             "start_date": "now",
@@ -86,7 +87,7 @@ class TestHostReservationScenario(rrs.ResourceReservationScenarioTest):
         return body
 
     def get_invalid_lease_body(self, lease_name, host_name):
-        current_time = datetime.datetime.utcnow()
+        current_time = timeutils.utcnow()
         end_time = current_time + datetime.timedelta(hours=1)
         body = {
             "start_date": "now",
@@ -108,7 +109,7 @@ class TestHostReservationScenario(rrs.ResourceReservationScenarioTest):
         return body
 
     def get_expiration_lease_body(self, lease_name, host_name):
-        current_time = datetime.datetime.utcnow()
+        current_time = timeutils.utcnow()
         end_time = current_time + datetime.timedelta(seconds=90)
         body = {
             'start_date': "now",
@@ -293,7 +294,7 @@ class TestHostReservationScenario(rrs.ResourceReservationScenarioTest):
         time.sleep(75)
 
         # update the lease end_time
-        end_time = datetime.datetime.utcnow() + datetime.timedelta(seconds=30)
+        end_time = timeutils.utcnow() + datetime.timedelta(seconds=30)
         body = {
             'end_date': end_time.strftime('%Y-%m-%d %H:%M')
             }
