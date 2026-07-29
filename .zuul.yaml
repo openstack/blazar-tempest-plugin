@@ -45,8 +45,11 @@
       - ^\.gitignore$
       - ^\.gitreview$
       - ^.*\.rst$
+      - ^blazar/tests/.*$
       - ^doc/.*$
       - ^releasenotes/.*$
+      - ^test-requirements\.txt$
+      - ^tools/.*$
       - ^tox\.ini$
 
 # TODO(gmann): As per the 2025.1 testing runtime, we need to run at least
