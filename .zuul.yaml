@@ -8,6 +8,7 @@
       jobs:
         - blazar-tempest-plugin-base
         - blazar-tempest-plugin-ipv6-only
+        - blazar-tempest-plugin-2026-2
         - blazar-tempest-plugin-2026-1
         - blazar-tempest-plugin-2025-2
         - blazar-tempest-plugin-2025-1
@@ -74,6 +75,12 @@
           blazar: https://opendev.org/openstack/blazar
     vars: *blazar_base_vars
     irrelevant-files: *irrelevant_files
+
+- job:
+    name: blazar-tempest-plugin-2026-2
+    parent: blazar-tempest-plugin-base
+    nodeset: openstack-single-node-noble
+    override-checkout: stable/2026.2
 
 - job:
     name: blazar-tempest-plugin-2026-1
