@@ -60,6 +60,14 @@
     description: This is integrated job testing on Ubuntu jammy(22.04)
     parent: blazar-tempest-plugin-base
     nodeset: openstack-single-node-jammy
+    required-projects:
+      - name: openstack/blazar-tempest-plugin
+        override-checkout: 0.15.0
+      - name: openstack/tempest
+        override-checkout: 46.3.0
+    vars:
+      devstack_localrc:
+        TEMPEST_VENV_UPPER_CONSTRAINTS: '/opt/stack/requirements/upper-constraints.txt'
 
 - job:
     name: blazar-tempest-plugin-ipv6-only
